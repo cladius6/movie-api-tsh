@@ -1,13 +1,18 @@
 import { Request, Response } from 'express';
 import express from 'express';
+import config from './config';
 
-const app = express();
-const port = 3000;
+async function bootstrap() {
+  const app = express();
+  const port = config.port;
 
-app.get('/', (_req: Request, res: Response) => {
-  res.send('Hello World!');
-});
+  app.get('/', (_req: Request, res: Response) => {
+    res.send('Hello World!');
+  });
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
-});
+  app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`);
+  });
+}
+
+bootstrap();
