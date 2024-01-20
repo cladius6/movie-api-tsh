@@ -12,7 +12,7 @@
     "lint:js": "npm run lint:eslint src/",
     "lint:fix": "npm run lint:js -- --fix",
     "test": "jest",
-    "postinstall": "quicktype ../data/db.json -o src/types/dbTypes.ts --lang ts"
+    "postinstall": "quicktype ../data/db.json -o src/types/dbTypes.ts --lang ts --just-types"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +20,7 @@
   "dependencies": {
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "ts-toolbelt": "^9.6.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
