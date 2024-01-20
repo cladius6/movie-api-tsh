@@ -7,7 +7,7 @@ const envFile = process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : '.env';
 const envFound = dotenv.config({
   path: envFile,
 });
-if (envFound.error) throw new Error("⚠️  Couldn't find .env file  ⚠️");
+if (envFound.error) throw new Error(`⚠️  Couldn't find ${envFile} file  ⚠️`);
 
 const configSchema = z.object({
   PORT: z.preprocess(val => Number(val), z.number()),
@@ -18,5 +18,7 @@ const config = configSchema.parse(process.env);
 
 export default {
   port: config.PORT,
-  api: config.API_PREFIX,
+  api: {
+    prefix: config.API_PREFIX,
+  },
 };
