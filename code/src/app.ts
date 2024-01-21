@@ -1,17 +1,21 @@
+import 'reflect-metadata';
 import { Request, Response } from 'express';
 import express from 'express';
 import config from './config';
+import routes from '@/api';
 
 async function bootstrap() {
   const app = express();
   const port = config.port;
 
-  app.get('/', (_req: Request, res: Response) => {
-    res.send('Hello World!');
+  app.get('/status', (_req: Request, res: Response) => {
+    res.status(200);
   });
 
+  app.use(config.api.prefix, routes());
+
   app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`);
+    console.log(`Express server listening on port ${port}`);
   });
 }
 
