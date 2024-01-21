@@ -25,6 +25,9 @@ dependencies:
     version: 3.22.4
 
 devDependencies:
+  '@bestcodetools/jest-tsconfig-paths-mapper':
+    specifier: ^1.0.2
+    version: 1.0.2
   '@types/express':
     specifier: ^4.17.21
     version: 4.17.21
@@ -427,6 +430,10 @@ packages:
 
   /@bcoe/v8-coverage@0.2.3:
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
+    dev: true
+
+  /@bestcodetools/jest-tsconfig-paths-mapper@1.0.2:
+    resolution: {integrity: sha512-EU3w36VFsxIcJkfPZKdfZ+qWlJtPmiI0nlf6pZVAG42KQp1dHfF7Z8uF3PcCJjNHVeZPpV9917nMwDyY8mrGCA==}
     dev: true
 
   /@cspotcode/source-map-support@0.8.1:
