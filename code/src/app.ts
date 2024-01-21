@@ -8,6 +8,8 @@ async function bootstrap() {
   const app = express();
   const port = config.api.port;
 
+  app.use(express.json());
+
   app.get('/status', (_req: Request, res: Response) => {
     res.status(200);
   });
