@@ -1,4 +1,3 @@
-import { Movie } from '@/Movie';
 import { MovieController } from '@/controllers/movie.controller';
 import { Router, Request, Response } from 'express';
 import { Container } from 'typedi';
@@ -10,4 +9,5 @@ export default (app: Router) => {
   const movieController = Container.get(MovieController);
 
   route.get('/', (req: Request, res: Response) => movieController.getAllMovies(req, res));
+  route.post('/', (req: Request, res: Response) => movieController.createMovie(req, res));
 };
