@@ -1,12 +1,12 @@
 import 'reflect-metadata';
 import { Request, Response } from 'express';
 import express from 'express';
-import config from './config';
+import config from '@/config';
 import routes from '@/api';
 
 async function bootstrap() {
   const app = express();
-  const port = config.port;
+  const port = config.api.port;
 
   app.get('/status', (_req: Request, res: Response) => {
     res.status(200);
