@@ -8,7 +8,7 @@
     "start": "node ./build/main.js",
     "start:dev": "nodemon",
     "lint": "npm run lint:js ",
-    "lint:eslint": "eslint --ignore-path .gitignore --ext .ts",
+    "lint:eslint": "eslint --ignore-path .gitignore --ignore-path .eslintignore --ext .ts",
     "lint:js": "npm run lint:eslint src/",
     "lint:fix": "npm run lint:js -- --fix",
     "test": "jest",

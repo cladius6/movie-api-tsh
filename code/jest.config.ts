@@ -1,5 +1,5 @@
-const { generateModuleNameMapper } = require('@bestcodetools/jest-tsconfig-paths-mapper');
 /* eslint-disable */
+const { generateModuleNameMapper } = require('@bestcodetools/jest-tsconfig-paths-mapper');
 export default {
   moduleFileExtensions: ['js', 'ts', 'json'],
   preset: 'ts-jest',
