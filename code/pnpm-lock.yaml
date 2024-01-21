@@ -11,9 +11,15 @@ dependencies:
   express:
     specifier: ^4.18.2
     version: 4.18.2
+  reflect-metadata:
+    specifier: ^0.2.1
+    version: 0.2.1
   ts-toolbelt:
     specifier: ^9.6.0
     version: 9.6.0
+  typedi:
+    specifier: ^0.10.0
+    version: 0.10.0
   zod:
     specifier: ^3.22.4
     version: 3.22.4
@@ -3570,6 +3576,10 @@ packages:
       picomatch: 2.3.1
     dev: true
 
+  /reflect-metadata@0.2.1:
+    resolution: {integrity: sha512-i5lLI6iw9AU3Uu4szRNPPEkomnkjRTaVt9hy/bn5g/oSzekBSMeLZblcjP74AW0vBabqERLLIrz+gR8QYR54Tw==}
+    dev: false
+
   /require-directory@2.1.1:
     resolution: {integrity: sha512-fGxEI7+wsG9xrvdjsrlmL22OMTTiHRwAMroiEeMgq8gzoLC/PQr7RsRDSTLUg/bZAZtF+TVIkHc6/4RIKrui+Q==}
     engines: {node: '>=0.10.0'}
@@ -4109,6 +4119,10 @@ packages:
     dependencies:
       media-typer: 0.3.0
       mime-types: 2.1.35
+    dev: false
+
+  /typedi@0.10.0:
+    resolution: {integrity: sha512-v3UJF8xm68BBj6AF4oQML3ikrfK2c9EmZUyLOfShpJuItAqVBHWP/KtpGinkSsIiP6EZyyb6Z3NXyW9dgS9X1w==}
     dev: false
 
   /typescript@4.9.4:
