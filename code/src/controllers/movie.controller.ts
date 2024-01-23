@@ -2,7 +2,7 @@ import { MovieService } from '@/services/movie.service';
 import { Service, Inject } from 'typedi';
 import { Request, Response } from 'express';
 
-// @GET /movies - single movie
+// @GET /movies - single random movie
 // @GET /movies?duration=x - single movie
 // @GET /movies?genres=x - array of movies
 // @GET /movies?duration=x&genres=y =- array of movies

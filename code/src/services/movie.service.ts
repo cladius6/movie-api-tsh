@@ -14,7 +14,7 @@ export class MovieService {
 
   async createMovie(movieData: TCreateMovie) {
     const movie = await createMovieSchema.parseAsync(movieData);
-    const newMovie: Omit<Movie, 'id'> = {
+    const newMovie = {
       ...movie,
       year: movie.year.toString(),
       runtime: movie.runtime.toString(),
@@ -22,6 +22,7 @@ export class MovieService {
       plot: movie.plot || '',
       posterUrl: movie.posterUrl || '',
     };
-    return this.movieRepository.addMovie(newMovie);
+    const addedMovie = await this.movieRepository.addMovie(newMovie);
+    return addedMovie;
   }
 }

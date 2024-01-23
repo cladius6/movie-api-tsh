@@ -22,7 +22,10 @@ describe(MovieService.name, () => {
             'https://images-na.ssl-images-amazon.com/images/M/MV5BMTU2Mjk2NDkyMl5BMl5BanBnXkFtZTgwNTk0NzcyMDE@._V1_SX300.jpg',
         },
       ]),
-      addMovie: jest.fn().mockImplementation(movie => Promise.resolve(movie)),
+      addMovie: jest.fn().mockImplementation(movie => {
+        const id = Math.floor(Math.random() * 1000);
+        return Promise.resolve({ id, ...movie });
+      }),
     };
     movieService = new MovieService(mockMovieRepository as MovieRepository);
   });
@@ -62,6 +65,7 @@ describe(MovieService.name, () => {
           'https://images-na.ssl-images-amazon.com/images/M/MV5BMTU2Mjk2NDkyMl5BMl5BanBnXkFtZTgwNTk0NzcyMDE@._V1_SX300.jpg',
       });
       expect(movie).toEqual({
+        id: expect.any(Number),
         title: 'Nebraska',
         year: '2013',
         runtime: '117',
@@ -86,6 +90,7 @@ describe(MovieService.name, () => {
         plot: 'An aging, booze-addled father makes the trip from Montana to Nebraska with his estranged son in order to claim a million-dollar Mega Sweepstakes Marketing prize.',
       });
       expect(movie).toEqual({
+        id: expect.any(Number),
         title: 'Nebraska',
         year: '2013',
         runtime: '117',
@@ -108,6 +113,7 @@ describe(MovieService.name, () => {
         actors: 'Bruce Dern, Will Forte, June Squibb, Bob Odenkirk',
       });
       expect(movie).toEqual({
+        id: expect.any(Number),
         title: 'Nebraska',
         year: '2013',
         runtime: '117',
@@ -129,6 +135,7 @@ describe(MovieService.name, () => {
         director: 'Jane Doe',
       });
       expect(movie).toEqual({
+        id: expect.any(Number),
         title: 'Nebraska',
         year: '2013',
         runtime: '117',
