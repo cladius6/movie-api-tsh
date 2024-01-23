@@ -1,6 +1,6 @@
 import { movieSchema } from '@/models/movie.model';
 import { MovieRepository } from '@/repositories/movie.repository';
-import { TCreateMovie, createMovieSchema } from '@/types/apiTypes';
+import { TCreateMovie, TGetMoviesQueryParams, createMovieSchema } from '@/types/apiTypes';
 import { Movie } from '@/types/dbTypes';
 import { Service, Inject } from 'typedi';
 
@@ -8,7 +8,7 @@ import { Service, Inject } from 'typedi';
 export class MovieService {
   constructor(@Inject(() => MovieRepository) private movieRepository: MovieRepository) {}
 
-  async getAllMovies() {
+  async getAllMovies(queryParams?: TGetMoviesQueryParams) {
     return this.movieRepository.getAllMovies();
   }
 

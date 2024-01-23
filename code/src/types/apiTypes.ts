@@ -25,6 +25,15 @@ export const movieSchema = z.object({
   posterUrl: z.string().url().optional(),
 });
 
+export type TMovie = z.infer<typeof movieSchema>;
+
 export const moviesSchema = z.array(movieSchema);
 
 export type TMovies = z.infer<typeof moviesSchema>;
+
+export const getMoviesQueryParamsSchema = z.object({
+  duration: z.number().positive().optional(),
+  genres: z.array(z.string().min(1)).optional(),
+});
+
+export type TGetMoviesQueryParams = z.infer<typeof moviesSchema>;
