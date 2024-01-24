@@ -1,6 +1,10 @@
 import { MovieService } from '@/services/movie.service';
 import { Service, Inject } from 'typedi';
 import { Request, Response } from 'express';
+import { zodParse } from '@/parsers/zod.parser';
+import { getMoviesQueryParamsSchema } from '@/types/apiTypes';
+import { InternalServerErrorException } from '@/exceptions/internal-server-error.exception';
+import { StatusCodes } from 'http-status-codes';
 
 // @GET /movies - single random movie
 // @GET /movies?duration=x - single movie
@@ -10,13 +14,15 @@ import { Request, Response } from 'express';
 export class MovieController {
   constructor(@Inject(() => MovieService) private movieService: MovieService) {}
 
-  async getAllMovies(_req: Request, res: Response) {
+  async getAllMovies(req: Request, res: Response) {
     try {
-      const movies = await this.movieService.getAllMovies();
-      return res.status(200).json(movies);
+      const {
+        query: { duration, genres },
+      } = await zodParse(getMoviesQueryParamsSchema, req);
+      const movies = await this.movieService.getAllMovies({ duration, genres });
+      return res.status(StatusCodes.OK).json(movies);
     } catch (e) {
-      console.debug(e);
-      return res.status(500).json({ message: 'Something went wrong!' });
+      throw new InternalServerErrorException();
     }
   }
 
@@ -24,10 +30,9 @@ export class MovieController {
     try {
       const newMovieData = req.body;
       const movies = await this.movieService.createMovie(newMovieData);
-      return res.status(201).json(movies);
+      return res.status(StatusCodes.CREATED).json(movies);
     } catch (e) {
-      console.debug(e);
-      return res.status(500).json({ message: 'Something went wrong!' });
+      throw new InternalServerErrorException();
     }
   }
 }

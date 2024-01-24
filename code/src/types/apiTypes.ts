@@ -31,9 +31,14 @@ export const moviesSchema = z.array(movieSchema);
 
 export type TMovies = z.infer<typeof moviesSchema>;
 
-export const getMoviesQueryParamsSchema = z.object({
+export const getMoviesSchema = z.object({
   duration: z.number().positive().optional(),
   genres: z.array(z.string().min(1)).optional(),
 });
 
-export type TGetMoviesQueryParams = z.infer<typeof moviesSchema>;
+export const getMoviesQueryParamsSchema = z.object({
+  query: getMoviesSchema,
+});
+
+export type TGetMoviesQueryParams = z.infer<typeof getMoviesQueryParamsSchema>;
+export type TGetMovies = z.infer<typeof getMoviesSchema>;

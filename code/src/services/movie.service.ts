@@ -1,15 +1,36 @@
-import { movieSchema } from '@/models/movie.model';
 import { MovieRepository } from '@/repositories/movie.repository';
-import { TCreateMovie, TGetMoviesQueryParams, createMovieSchema } from '@/types/apiTypes';
-import { Movie } from '@/types/dbTypes';
+import { TCreateMovie, TGetMovies, createMovieSchema } from '@/types/apiTypes';
 import { Service, Inject } from 'typedi';
+import { MovieSelectorService } from './movie-selector.service';
 
 @Service()
 export class MovieService {
-  constructor(@Inject(() => MovieRepository) private movieRepository: MovieRepository) {}
+  constructor(
+    @Inject(() => MovieRepository) private movieRepository: MovieRepository,
+    @Inject(() => MovieSelectorService) private movieSelectorService: MovieSelectorService,
+  ) {}
 
-  async getAllMovies(queryParams?: TGetMoviesQueryParams) {
-    return this.movieRepository.getAllMovies();
+  async getAllMovies(query: TGetMovies) {
+    const movies = await this.movieRepository.getAllMovies();
+    const { duration, genres } = query;
+    if (duration && !genres) {
+      const moviesByDuration = this.movieSelectorService.getMoviesByDuration(movies, duration);
+      if (moviesByDuration.length > 0) {
+        const randomMovieByDuration = this.movieSelectorService.getRandomMovie(moviesByDuration);
+        return randomMovieByDuration;
+      }
+    }
+    if (!duration && genres) {
+      const moviesWithGenres = this.movieSelectorService.getMoviesWithGenres(movies, genres);
+      return moviesWithGenres;
+    }
+    if (duration && genres) {
+      const moviesWithGenres = this.movieSelectorService.getMoviesWithGenres(movies, genres);
+      const moviesByDurationAndGenres = this.movieSelectorService.getMoviesByDuration(moviesWithGenres, duration);
+      return moviesByDurationAndGenres;
+    }
+
+    return this.movieSelectorService.getRandomMovie(movies);
   }
 
   async createMovie(movieData: TCreateMovie) {
