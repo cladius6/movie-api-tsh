@@ -23,16 +23,17 @@
     "noEmit": false,
     "esModuleInterop": true,
     "baseUrl": ".",
+    "types": ["jest", "node"],
     "paths": {
       "@/*": ["./src/*"]
     },
     "strict": true
   },
   "include": [
-    "./src/**/*.ts"
+    "./src/**/*.ts",
+    "**/*.test.ts" 
   ],
   "exclude": [
     "node_modules",
-    "__tests__"
   ]
 }
