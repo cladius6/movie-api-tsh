@@ -1,8 +1,6 @@
 import { MovieRepository } from '@/repositories/movie.repository';
 import { DatabaseService } from '@/services/database.service';
 
-jest.mock('fs/promises');
-
 describe(MovieRepository.name, () => {
   let movieRepository: MovieRepository;
   let databaseService: DatabaseService;
