@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import express from 'express';
 import config from '@/config';
 import routes from '@/api';
+import { errorHandler } from './handlers/error.handler';
 
 async function bootstrap() {
   const app = express();
@@ -15,6 +16,8 @@ async function bootstrap() {
   });
 
   app.use(config.api.prefix, routes());
+
+  app.use(errorHandler);
 
   app.listen(port, () => {
     console.log(`Express server listening on port ${port}`);

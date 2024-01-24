@@ -1,5 +1,5 @@
-import { BadRequestException } from '@/exceptions/bad-request.exception';
-import { InternalServerErrorException } from '@/exceptions/internal-server-error.exception';
+import { HttpsError } from '@/errors/https.error';
+import { ErrorStatusCode } from '@/types/errors';
 import type { Request } from 'express';
 import { AnyZodObject, ZodError, z } from 'zod';
 
@@ -8,8 +8,8 @@ export async function zodParse<T extends AnyZodObject>(schema: T, req: Request):
     return await schema.parseAsync(req);
   } catch (error) {
     if (error instanceof ZodError) {
-      throw new BadRequestException(error.message);
+      throw new HttpsError(ErrorStatusCode.BAD_REQUEST, 'Type validation error', error.issues);
     }
-    return new InternalServerErrorException(JSON.stringify(error));
+    throw new HttpsError(ErrorStatusCode.INTERNAL, JSON.stringify(error));
   }
 }
