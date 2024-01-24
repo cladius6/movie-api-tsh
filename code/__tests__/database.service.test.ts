@@ -3,7 +3,7 @@ import { readFile, writeFile } from 'fs/promises';
 
 jest.mock('fs/promises');
 
-describe.skip(DatabaseService.name, () => {
+describe(DatabaseService.name, () => {
   let databaseService: DatabaseService;
 
   beforeEach(() => {
@@ -11,7 +11,7 @@ describe.skip(DatabaseService.name, () => {
   });
 
   it('should read data from database correctly', async () => {
-    const mockData = {
+    const testData = JSON.stringify({
       genres: [
         'Comedy',
         'Fantasy',
@@ -61,12 +61,13 @@ describe.skip(DatabaseService.name, () => {
             'https://images-na.ssl-images-amazon.com/images/M/MV5BMTU5ODAyNzA4OV5BMl5BanBnXkFtZTcwNzYwNTIzNA@@._V1_SX300.jpg',
         },
       ],
-    };
+    });
 
-    (readFile as jest.Mock).mockResolvedValue(mockData);
+    (readFile as jest.Mock).mockResolvedValue(testData);
     const data = await databaseService.readDb();
 
-    expect(data).toEqual(mockData);
+    expect(data).toEqual(JSON.parse(testData));
+    expect(readFile).toHaveBeenCalled();
   });
 
   it('should write data to database correctly', async () => {
@@ -90,8 +91,8 @@ describe.skip(DatabaseService.name, () => {
 
     (writeFile as jest.Mock).mockResolvedValue(undefined);
 
-    const data = await databaseService.writeDb(testData);
+    await databaseService.writeDb(testData);
 
-    expect(data).toEqual(testData);
+    expect(writeFile).toHaveBeenCalledWith(expect.any(String), JSON.stringify(testData, null, 2), 'utf-8');
   });
 });
