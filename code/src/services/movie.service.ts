@@ -1,7 +1,8 @@
 import { MovieRepository } from '@/repositories/movie.repository';
-import { TCreateMovie, TGetMovies, createMovieSchema } from '@/types/apiTypes';
+import { TCreateMovie, TGetMovies } from '@/types/apiTypes';
 import { Service, Inject } from 'typedi';
 import { MovieSelectorService } from './movie-selector.service';
+import { createMovieSchema } from '@/schemas/movies.schema';
 
 @Service()
 export class MovieService {
@@ -13,6 +14,7 @@ export class MovieService {
   async getAllMovies(query: TGetMovies) {
     const movies = await this.movieRepository.getAllMovies();
     const { duration, genres } = query;
+
     if (duration && !genres) {
       const moviesByDuration = this.movieSelectorService.getMoviesByDuration(movies, duration);
       if (moviesByDuration.length > 0) {
@@ -20,10 +22,12 @@ export class MovieService {
         return randomMovieByDuration;
       }
     }
+
     if (!duration && genres) {
       const moviesWithGenres = this.movieSelectorService.getMoviesWithGenres(movies, genres);
       return moviesWithGenres;
     }
+
     if (duration && genres) {
       const moviesWithGenres = this.movieSelectorService.getMoviesWithGenres(movies, genres);
       const moviesByDurationAndGenres = this.movieSelectorService.getMoviesByDuration(moviesWithGenres, duration);

@@ -2,8 +2,8 @@ import { MovieService } from '@/services/movie.service';
 import { Service, Inject } from 'typedi';
 import { NextFunction, Request, Response } from 'express';
 import { zodParse } from '@/parsers/zod.parser';
-import { createMovieRequestSchema, getMoviesQueryParamsSchema } from '@/types/apiTypes';
 import { StatusCodes } from 'http-status-codes';
+import { createMovieRequestSchema, getMoviesQueryParamsSchema } from '@/schemas/movies.schema';
 
 @Service()
 export class MovieController {
