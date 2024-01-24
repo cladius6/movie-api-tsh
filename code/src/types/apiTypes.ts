@@ -13,6 +13,11 @@ export const createMovieSchema = z.object({
 
 export type TCreateMovie = z.infer<typeof createMovieSchema>;
 
+export const createMovieRequestSchema = z.object({
+  body: createMovieSchema,
+});
+export type TCreateMovieRequest = z.infer<typeof createMovieRequestSchema>;
+
 export const movieSchema = z.object({
   id: z.number().positive(),
   genres: z.array(z.string()),

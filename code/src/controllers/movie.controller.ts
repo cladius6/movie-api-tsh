@@ -2,7 +2,7 @@ import { MovieService } from '@/services/movie.service';
 import { Service, Inject } from 'typedi';
 import { NextFunction, Request, Response } from 'express';
 import { zodParse } from '@/parsers/zod.parser';
-import { getMoviesQueryParamsSchema } from '@/types/apiTypes';
+import { createMovieRequestSchema, getMoviesQueryParamsSchema } from '@/types/apiTypes';
 import { StatusCodes } from 'http-status-codes';
 
 @Service()
@@ -23,8 +23,8 @@ export class MovieController {
 
   async createMovie(req: Request, res: Response, next: NextFunction) {
     try {
-      const newMovieData = req.body;
-      const movies = await this.movieService.createMovie(newMovieData);
+      const { body } = await zodParse(createMovieRequestSchema, req);
+      const movies = await this.movieService.createMovie(body);
       return res.status(StatusCodes.CREATED).json(movies);
     } catch (error) {
       next(error);
