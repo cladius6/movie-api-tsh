@@ -1,12 +1,12 @@
-import { TMovie } from '@/models/movie.model';
-import { MovieSelectorService } from '@/services/movie-selector.service';
+import { DbMovieSelectorService } from '@/services/movie-selector.service';
+import { TMovie } from '@/types/api-types';
 
-describe(MovieSelectorService.name, () => {
-  let movieSelectorService: MovieSelectorService;
+describe(DbMovieSelectorService.name, () => {
+  let movieSelectorService: DbMovieSelectorService;
   let movies: TMovie[];
 
   beforeEach(() => {
-    movieSelectorService = new MovieSelectorService();
+    movieSelectorService = new DbMovieSelectorService();
     movies = [
       {
         id: 1,

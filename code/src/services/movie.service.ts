@@ -1,40 +1,69 @@
 import { MovieRepository } from '@/repositories/movie.repository';
 import { TCreateMovie, TGetMovies } from '@/types/api-types';
 import { Service, Inject } from 'typedi';
-import { MovieSelectorService } from './movie-selector.service';
+import { DbMovieSelectorService } from './movie-selector.service';
 import { createMovieSchema } from '@/schemas/create-movie.schema';
+import { ApiMovie } from '@/models/api-movie.model';
+import { DbMovie } from '@/models/db-movie.model';
+import { HttpsError } from '@/exceptions/https-error';
+import { ErrorStatusCode } from '@/types/errors';
 
 @Service()
 export class MovieService {
   constructor(
     @Inject(() => MovieRepository) private movieRepository: MovieRepository,
-    @Inject(() => MovieSelectorService) private movieSelectorService: MovieSelectorService,
+    @Inject(() => DbMovieSelectorService) private movieSelectorService: DbMovieSelectorService,
   ) {}
 
-  async getAllMovies(query: TGetMovies) {
-    const movies = await this.movieRepository.getAllMovies();
+  private getApiRandomMovieByDuration(movies: DbMovie[], duration: number): ApiMovie {
+    const moviesByDuration = this.movieSelectorService.getMoviesByDuration(movies, duration);
+    if (moviesByDuration.length > 0) {
+      const randomMovieByDuration = this.movieSelectorService.getRandomMovie(moviesByDuration);
+      return new ApiMovie(randomMovieByDuration);
+    } else {
+      throw new HttpsError(ErrorStatusCode.NOT_FOUND, `Movie with ${duration} not found!`);
+    }
+  }
+
+  private getApiMoviesWithGenres(movies: DbMovie[], genres: string[]): ApiMovie[] {
+    const moviesWithGenres = this.movieSelectorService.getMoviesWithGenres(movies, genres);
+    if (moviesWithGenres.length > 0) {
+      return moviesWithGenres.map(movie => new ApiMovie(movie));
+    } else throw new HttpsError(ErrorStatusCode.NOT_FOUND, `Movies with ${genres} not found!`);
+  }
+
+  private getApiMoviesWithDurationAndGenres(movies: DbMovie[], duration: number, genres: string[]): ApiMovie[] {
+    const moviesByDuration = this.movieSelectorService.getMoviesByDuration(movies, duration);
+    const moviesWithGenresAndDuration = this.movieSelectorService.getMoviesWithGenres(moviesByDuration, genres);
+    if (moviesWithGenresAndDuration.length > 0) return moviesWithGenresAndDuration.map(movies => new ApiMovie(movies));
+    else
+      throw new HttpsError(
+        ErrorStatusCode.NOT_FOUND,
+        `Movies with duration ${duration} and genres ${genres} not found!`,
+      );
+  }
+
+  private getRandomApiMovie(movies: DbMovie[]): ApiMovie {
+    return new ApiMovie(this.movieSelectorService.getRandomMovie(movies));
+  }
+
+  async getAllMovies(query: TGetMovies): Promise<ApiMovie[]> {
+    const movies: DbMovie[] = await this.movieRepository.getAllMovies();
     const { duration, genres } = query;
 
     if (duration && !genres) {
-      const moviesByDuration = this.movieSelectorService.getMoviesByDuration(movies, duration);
-      if (moviesByDuration.length > 0) {
-        const randomMovieByDuration = this.movieSelectorService.getRandomMovie(moviesByDuration);
-        return randomMovieByDuration;
-      }
+      return [this.getApiRandomMovieByDuration(movies, duration)];
     }
 
     if (!duration && genres) {
-      const moviesWithGenres = this.movieSelectorService.getMoviesWithGenres(movies, genres);
-      return moviesWithGenres;
+      return this.getApiMoviesWithGenres(movies, genres);
     }
 
     if (duration && genres) {
-      const moviesWithGenres = this.movieSelectorService.getMoviesWithGenres(movies, genres);
-      const moviesByDurationAndGenres = this.movieSelectorService.getMoviesByDuration(moviesWithGenres, duration);
-      return moviesByDurationAndGenres;
+      return this.getApiMoviesWithDurationAndGenres(movies, duration, genres);
     }
 
-    return this.movieSelectorService.getRandomMovie(movies);
+    return [this.getRandomApiMovie(movies)];
   }
 
   async createMovie(movieData: TCreateMovie) {
@@ -48,6 +77,6 @@ export class MovieService {
       posterUrl: movie.posterUrl || '',
     };
     const addedMovie = await this.movieRepository.addMovie(newMovie);
-    return addedMovie;
+    return new ApiMovie(addedMovie);
   }
 }

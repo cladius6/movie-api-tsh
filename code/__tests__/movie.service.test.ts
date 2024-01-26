@@ -2,13 +2,15 @@ import { MovieService } from '../src/services/movie.service';
 import { MovieRepository } from '../src/repositories/movie.repository';
 import { ZodError } from 'zod';
 import dbData from '../../data/db.test.json';
-import { TGetMovies } from '../src/types/apiTypes';
-import { MovieSelectorService } from '../src/services/movie-selector.service';
+import { TGetMovies } from '../src/types/api-types';
+import { DbMovieSelectorService } from '../src/services/movie-selector.service';
+import { ApiMovie } from '@/models/api-movie.model';
+import { DbMovie } from '@/models/db-movie.model';
 
 describe(MovieService.name, () => {
   let movieService: MovieService;
   let mockMovieRepository: Partial<MovieRepository>;
-  let movieSelectorService: MovieSelectorService;
+  let movieSelectorService: DbMovieSelectorService;
 
   beforeEach(() => {
     mockMovieRepository = {
@@ -18,13 +20,13 @@ describe(MovieService.name, () => {
         return Promise.resolve({ id, ...movie });
       }),
     };
-    movieSelectorService = new MovieSelectorService();
+    movieSelectorService = new DbMovieSelectorService();
     movieService = new MovieService(mockMovieRepository as MovieRepository, movieSelectorService);
   });
 
   describe('getAllMovies', () => {
     it('should retrieve random movie if no query parameters were provided', async () => {
-      const mockedData = [
+      const mockedData: DbMovie[] = [
         {
           id: 4,
           title: 'Crocodile Dundee',
@@ -53,7 +55,11 @@ describe(MovieService.name, () => {
 
       const movie = await movieService.getAllMovies({});
 
-      expect(movie === mockedData[0] || movie === mockedData[1]).toBeTruthy();
+      expect(movie.length).toBe(1);
+      const movieOne = new ApiMovie(mockedData[0]);
+      const movieTwo = new ApiMovie(mockedData[1]);
+      expect(typeof movie[0].runtime === 'number').toBeTruthy();
+      expect(movie[0].id == movieOne.id || movie[0].id == movieTwo.id).toBeTruthy();
     });
 
     it('should return a single movie with runtime between duration + 10 or duration - 10 specifed in query parameters ', async () => {
@@ -86,24 +92,26 @@ describe(MovieService.name, () => {
         },
       ]);
 
-      const expectedResponse = {
-        id: 4,
-        title: 'Crocodile Dundee',
-        year: '1986',
-        runtime: '97',
-        genres: ['Adventure', 'Comedy'],
-        director: 'Peter Faiman',
-        actors: 'Paul Hogan, Linda Kozlowski, John Meillon, David Gulpilil',
-        plot: 'An American reporter goes to the Australian outback to meet an eccentric crocodile poacher and invites him to New York City.',
-        posterUrl:
-          'https://images-na.ssl-images-amazon.com/images/M/MV5BMTg0MTU1MTg4NF5BMl5BanBnXkFtZTgwMDgzNzYxMTE@._V1_SX300.jpg',
-      };
+      const expectedResponse: ApiMovie[] = [
+        {
+          id: 4,
+          title: 'Crocodile Dundee',
+          year: 1986,
+          runtime: 97,
+          genres: ['Adventure', 'Comedy'],
+          director: 'Peter Faiman',
+          actors: 'Paul Hogan, Linda Kozlowski, John Meillon, David Gulpilil',
+          plot: 'An American reporter goes to the Australian outback to meet an eccentric crocodile poacher and invites him to New York City.',
+          posterUrl:
+            'https://images-na.ssl-images-amazon.com/images/M/MV5BMTg0MTU1MTg4NF5BMl5BanBnXkFtZTgwMDgzNzYxMTE@._V1_SX300.jpg',
+        },
+      ];
       const movie = await movieService.getAllMovies(queryParams);
 
       expect(movie).toEqual(expectedResponse);
     });
 
-    it('should return a single movie with runtime between duration + 10 or duration - 10 specifed in query parameters ', async () => {
+    it('should return a movies with specified genres in query parameters correctly ', async () => {
       const queryParams: TGetMovies = {
         genres: ['Crime', 'Drama'],
       };
@@ -113,8 +121,8 @@ describe(MovieService.name, () => {
         {
           id: 2,
           title: 'The Cotton Club',
-          year: '1984',
-          runtime: '127',
+          year: 1984,
+          runtime: 127,
           genres: ['Crime', 'Drama', 'Music'],
           director: 'Francis Ford Coppola',
           actors: 'Richard Gere, Gregory Hines, Diane Lane, Lonette McKee',
@@ -125,8 +133,8 @@ describe(MovieService.name, () => {
         {
           id: 3,
           title: 'The Shawshank Redemption',
-          year: '1994',
-          runtime: '142',
+          year: 1994,
+          runtime: 142,
           genres: ['Crime', 'Drama'],
           director: 'Frank Darabont',
           actors: 'Tim Robbins, Morgan Freeman, Bob Gunton, William Sadler',
@@ -137,8 +145,8 @@ describe(MovieService.name, () => {
         {
           id: 7,
           title: 'City of God',
-          year: '2002',
-          runtime: '130',
+          year: 2002,
+          runtime: 130,
           genres: ['Crime', 'Drama'],
           director: 'Fernando Meirelles, Kátia Lund',
           actors: 'Alexandre Rodrigues, Leandro Firmino, Phellipe Haagensen, Douglas Silva',
@@ -149,8 +157,8 @@ describe(MovieService.name, () => {
         {
           id: 5,
           title: 'Valkyrie',
-          year: '2008',
-          runtime: '121',
+          year: 2008,
+          runtime: 121,
           genres: ['Drama', 'History', 'Thriller'],
           director: 'Bryan Singer',
           actors: 'Tom Cruise, Kenneth Branagh, Bill Nighy, Tom Wilkinson',
@@ -160,8 +168,8 @@ describe(MovieService.name, () => {
         {
           id: 9,
           title: 'The Intouchables',
-          year: '2011',
-          runtime: '112',
+          year: 2011,
+          runtime: 112,
           genres: ['Biography', 'Comedy', 'Drama'],
           director: 'Olivier Nakache, Eric Toledano',
           actors: 'François Cluzet, Omar Sy, Anne Le Ny, Audrey Fleurot',
@@ -176,7 +184,7 @@ describe(MovieService.name, () => {
     it('should return a single movie with runtime between duration + 10 or duration - 10 specifed in query parameters ', async () => {
       const queryParams: TGetMovies = {
         genres: ['Crime', 'Drama'],
-        duration: 120,
+        duration: 130,
       };
       const movie = await movieService.getAllMovies(queryParams);
 
@@ -184,8 +192,8 @@ describe(MovieService.name, () => {
         {
           id: 2,
           title: 'The Cotton Club',
-          year: '1984',
-          runtime: '127',
+          year: 1984,
+          runtime: 127,
           genres: ['Crime', 'Drama', 'Music'],
           director: 'Francis Ford Coppola',
           actors: 'Richard Gere, Gregory Hines, Diane Lane, Lonette McKee',
@@ -196,8 +204,8 @@ describe(MovieService.name, () => {
         {
           id: 7,
           title: 'City of God',
-          year: '2002',
-          runtime: '130',
+          year: 2002,
+          runtime: 130,
           genres: ['Crime', 'Drama'],
           director: 'Fernando Meirelles, Kátia Lund',
           actors: 'Alexandre Rodrigues, Leandro Firmino, Phellipe Haagensen, Douglas Silva',
@@ -208,24 +216,13 @@ describe(MovieService.name, () => {
         {
           id: 5,
           title: 'Valkyrie',
-          year: '2008',
-          runtime: '121',
+          year: 2008,
+          runtime: 121,
           genres: ['Drama', 'History', 'Thriller'],
           director: 'Bryan Singer',
           actors: 'Tom Cruise, Kenneth Branagh, Bill Nighy, Tom Wilkinson',
           plot: 'A dramatization of the 20 July assassination and political coup plot by desperate renegade German Army officers against Hitler during World War II.',
           posterUrl: 'http://ia.media-imdb.com/images/M/MV5BMTg3Njc2ODEyN15BMl5BanBnXkFtZTcwNTAwMzc3NA@@._V1_SX300.jpg',
-        },
-        {
-          id: 9,
-          title: 'The Intouchables',
-          year: '2011',
-          runtime: '112',
-          genres: ['Biography', 'Comedy', 'Drama'],
-          director: 'Olivier Nakache, Eric Toledano',
-          actors: 'François Cluzet, Omar Sy, Anne Le Ny, Audrey Fleurot',
-          plot: 'After he becomes a quadriplegic from a paragliding accident, an aristocrat hires a young man from the projects to be his caregiver.',
-          posterUrl: 'http://ia.media-imdb.com/images/M/MV5BMTYxNDA3MDQwNl5BMl5BanBnXkFtZTcwNTU4Mzc1Nw@@._V1_SX300.jpg',
         },
       ];
 
@@ -249,8 +246,8 @@ describe(MovieService.name, () => {
       expect(movie).toEqual({
         id: expect.any(Number),
         title: 'Nebraska',
-        year: '2013',
-        runtime: '117',
+        year: 2013,
+        runtime: 117,
         genres: ['Drama'],
         director: 'Jane Doe',
         actors: 'Bruce Dern, Will Forte, June Squibb, Bob Odenkirk',
@@ -274,8 +271,8 @@ describe(MovieService.name, () => {
       expect(movie).toEqual({
         id: expect.any(Number),
         title: 'Nebraska',
-        year: '2013',
-        runtime: '117',
+        year: 2013,
+        runtime: 117,
         genres: ['Drama'],
         director: 'Jane Doe',
         actors: 'Bruce Dern, Will Forte, June Squibb, Bob Odenkirk',
@@ -297,8 +294,8 @@ describe(MovieService.name, () => {
       expect(movie).toEqual({
         id: expect.any(Number),
         title: 'Nebraska',
-        year: '2013',
-        runtime: '117',
+        year: 2013,
+        runtime: 117,
         genres: ['Drama'],
         director: 'Jane Doe',
         actors: 'Bruce Dern, Will Forte, June Squibb, Bob Odenkirk',
@@ -319,8 +316,8 @@ describe(MovieService.name, () => {
       expect(movie).toEqual({
         id: expect.any(Number),
         title: 'Nebraska',
-        year: '2013',
-        runtime: '117',
+        year: 2013,
+        runtime: 117,
         genres: ['Drama'],
         director: 'Jane Doe',
         actors: '',

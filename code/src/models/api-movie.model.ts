@@ -1,6 +1,3 @@
-import { z } from 'zod';
-import { A, Test } from 'ts-toolbelt';
-import { Movie } from '@/types/db-types';
 import { DbMovie } from './db-movie.model';
 
 export class ApiMovie {
@@ -10,6 +7,7 @@ export class ApiMovie {
   runtime: number;
   genres: string[];
   director: string;
+  actors: string;
   plot: string;
   posterUrl: string;
 
@@ -20,6 +18,7 @@ export class ApiMovie {
     this.runtime = parseInt(dbMovie.runtime);
     this.genres = dbMovie.genres;
     this.director = dbMovie.director;
+    this.actors = dbMovie.actors;
     this.plot = dbMovie.plot;
     this.posterUrl = dbMovie.posterUrl;
   }

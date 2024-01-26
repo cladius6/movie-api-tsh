@@ -1,10 +1,10 @@
+import { DbMovie } from '@/models/db-movie.model';
 import { TMovie } from '@/types/api-types';
-import { Movie } from '@/types/db-types';
 import { Service } from 'typedi';
 
 @Service()
-export class MovieSelectorService {
-  getMoviesByDuration(movies: TMovie[], duration: number): TMovie[] {
+export class DbMovieSelectorService {
+  getMoviesByDuration(movies: DbMovie[], duration: number): DbMovie[] {
     const minRuntime = duration - 10;
     const maxRuntime = duration + 10;
 
@@ -14,12 +14,12 @@ export class MovieSelectorService {
     return filteredMovies;
   }
 
-  getRandomMovie(movies: TMovie[]): TMovie {
+  getRandomMovie(movies: DbMovie[]): TMovie {
     const randomMoviesIndex = Math.floor(Math.random() * movies.length);
     return movies[randomMoviesIndex];
   }
 
-  getMoviesWithGenres(movies: TMovie[], genres: string[]) {
+  getMoviesWithGenres(movies: DbMovie[], genres: string[]): DbMovie[] {
     const genreSet = new Set(genres);
 
     const moviesWithGenreMatchCounts = movies
@@ -34,7 +34,7 @@ export class MovieSelectorService {
     return moviesWithGenreMatchCounts.map(movieWithCount => movieWithCount.movie);
   }
 
-  private countMatchingGenres(movie: Movie, genreSet: Set<string>): number {
+  private countMatchingGenres(movie: DbMovie, genreSet: Set<string>): number {
     return movie.genres.reduce((count, genre) => (genreSet.has(genre) ? count + 1 : count), 0);
   }
 }
