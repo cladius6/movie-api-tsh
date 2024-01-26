@@ -4,7 +4,9 @@ import { ErrorStatusCode } from '@/types/errors';
 import { NextFunction, Request, Response } from 'express';
 
 export function errorHandler(err: HttpsError | Error, _req: Request, res: Response, _next: NextFunction) {
-  logger.error(err);
+  if (process.env.NODE_ENV !== 'test') {
+    logger.error(err);
+  }
 
   let statusCode: number;
 

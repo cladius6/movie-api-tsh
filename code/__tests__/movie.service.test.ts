@@ -19,10 +19,15 @@ describe(MovieService.name, () => {
         const id = Math.floor(Math.random() * 1000);
         return Promise.resolve({ id, ...movie });
       }),
+      findByTitleYearAndActorsAndRuntime: jest.fn().mockResolvedValue(undefined),
     };
     movieSelectorService = new DbMovieSelectorService();
     movieService = new MovieService(mockMovieRepository as MovieRepository, movieSelectorService);
   });
+
+  function fail(message = '') {
+    expect(`[FAIL] ${message}`.trim()).toBeFalsy();
+  }
 
   describe('getAllMovies', () => {
     it('should retrieve random movie if no query parameters were provided', async () => {

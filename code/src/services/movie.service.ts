@@ -68,6 +68,15 @@ export class MovieService {
 
   async createMovie(movieData: TCreateMovie) {
     const movie = await createMovieSchema.parseAsync(movieData);
+    const existingMovie = await this.movieRepository.findByTitleYearAndActorsAndRuntime(
+      movieData.title,
+      movieData.year.toString(),
+      movieData.actors || '',
+      movieData.runtime.toString(),
+    );
+    if (existingMovie !== undefined) {
+      throw new HttpsError(ErrorStatusCode.CONFLICT, 'Movie already exists!');
+    }
     const newMovie = {
       ...movie,
       year: movie.year.toString(),

@@ -3,6 +3,7 @@ import app from '@/app';
 import { copyFile, writeFile, readFile, unlink } from 'fs/promises';
 import { ApiMovie } from '@/models/api-movie.model';
 import { join } from 'path';
+import { faker } from '@faker-js/faker';
 
 describe('MovieController', () => {
   let dbPath = join(__dirname + '/../../data/');
@@ -103,9 +104,9 @@ describe('MovieController', () => {
   describe('POST /movies', () => {
     it('should create a new movie', async () => {
       const newMovie = {
-        title: 'The Big Short',
-        year: 2015,
-        runtime: 130,
+        title: faker.company.name(),
+        year: 1990,
+        runtime: 170,
         genres: ['Biography', 'Comedy', 'Drama'],
         director: 'Adam McKay',
         actors: 'Ryan Gosling, Rudy Eisenzopf, Casey Groves, Charlie Talbert',
@@ -118,11 +119,26 @@ describe('MovieController', () => {
       expect(response.body).toEqual({ id: expect.any(Number), ...newMovie });
     });
 
+    it('should 409 status code if that movie already exists', async () => {
+      const newMovie = {
+        title: 'A Separation',
+        year: 2011,
+        runtime: 123,
+        genres: ['Drama', 'Mystery'],
+        director: 'Asghar Farhadi',
+        actors: 'Peyman Moaadi, Leila Hatami, Sareh Bayat, Shahab Hosseini',
+        plot: "A married couple are faced with a difficult decision - to improve the life of their child by moving to another country or to stay in Iran and look after a deteriorating parent who has Alzheimer's disease.",
+        posterUrl: 'http://ia.media-imdb.com/images/M/MV5BMTYzMzU4NDUwOF5BMl5BanBnXkFtZTcwMTM5MjA5Ng@@._V1_SX300.jpg',
+      };
+      const response = await request(app).post('/api/movies').send(newMovie);
+      expect(response.status).toBe(409);
+    });
+
     it('should create a new movie without actors correctly', async () => {
       const newMovie = {
-        title: 'The Big Short',
-        year: 2015,
-        runtime: 130,
+        title: faker.company.name(),
+        year: 2017,
+        runtime: 170,
         genres: ['Biography', 'Comedy', 'Drama'],
         director: 'Adam McKay',
         plot: 'Four denizens in the world of high-finance predict the credit and housing bubble collapse of the mid-2000s, and decide to take on the big banks for their greed and lack of foresight.',
@@ -131,9 +147,9 @@ describe('MovieController', () => {
       };
       const expectedResponse = {
         id: expect.any(Number),
-        title: 'The Big Short',
-        year: 2015,
-        runtime: 130,
+        title: newMovie.title,
+        year: 2017,
+        runtime: 170,
         genres: ['Biography', 'Comedy', 'Drama'],
         director: 'Adam McKay',
         actors: '',
@@ -148,9 +164,9 @@ describe('MovieController', () => {
 
     it('should create a new movie without actors, plot correctly', async () => {
       const newMovie = {
-        title: 'The Big Short',
-        year: 2015,
-        runtime: 130,
+        title: faker.company.name(),
+        year: 2018,
+        runtime: 160,
         genres: ['Biography', 'Comedy', 'Drama'],
         director: 'Adam McKay',
         posterUrl:
@@ -158,9 +174,9 @@ describe('MovieController', () => {
       };
       const expectedResponse = {
         id: expect.any(Number),
-        title: 'The Big Short',
-        year: 2015,
-        runtime: 130,
+        title: newMovie.title,
+        year: 2018,
+        runtime: 160,
         genres: ['Biography', 'Comedy', 'Drama'],
         director: 'Adam McKay',
         actors: '',
@@ -175,17 +191,17 @@ describe('MovieController', () => {
 
     it('should create a new movie without actors, plot and posterUrl correctly', async () => {
       const newMovie = {
-        title: 'The Big Short',
-        year: 2015,
-        runtime: 130,
+        title: faker.company.name(),
+        year: 2017,
+        runtime: 170,
         genres: ['Biography', 'Comedy', 'Drama'],
         director: 'Adam McKay',
       };
       const expectedResponse = {
         id: expect.any(Number),
-        title: 'The Big Short',
-        year: 2015,
-        runtime: 130,
+        title: newMovie.title,
+        year: 2017,
+        runtime: 170,
         genres: ['Biography', 'Comedy', 'Drama'],
         director: 'Adam McKay',
         actors: '',
@@ -201,8 +217,8 @@ describe('MovieController', () => {
       const newMovie = {
         title:
           'The Big ShortThe Big ShortThe  Big ShortThe Big ShortTh Big ShortThe Big ShortTh Big ShortThe Big ShortTh Big ShortThe Big ShortTh Big ShortThe Big ShortTh Big ShortThe Big ShortThe Big ShortThe Big ShortThe Big ShortThe Big ShortThe Big ShortThe Big ShortThe Big ShortThe Big ShortThe Big ShortThe Big ShortThe Big ShortThe Big ShortThe Big ShortThe Big Short',
-        year: 2015,
-        runtime: 130,
+        year: 2017,
+        runtime: 170,
         genres: ['Biography', 'Comedy', 'Drama'],
         director: 'Adam McKay',
       };
@@ -213,9 +229,9 @@ describe('MovieController', () => {
 
     it('should return status 400 when creating a new movie if director is more then 255 characters', async () => {
       const newMovie = {
-        title: 'The Big Short',
-        year: 2015,
-        runtime: 130,
+        title: faker.company.name(),
+        year: 2017,
+        runtime: 170,
         genres: ['Biography', 'Comedy', 'Drama'],
         director:
           'AdamMcKayAdamMcKayAdamMcKayAdamMcKayAdamMcKayAdamMcKayAdamMcKayAdamMcKayAdamMcKayAdamMcKayAdamMcKayAdamMcKayAdamMcKayAdamMcKayAdamMcKayAdamMcKayAdamMcKayAdamMcKayAdamMcKayAdamMcKayAdamMcKayAdamMcKayAdamMcKayAdamMcKayAdamMcKayAdamMcKayAdamMcKayAdamMcKayAdamMcKayAdamMcKayAdamMcKayAdamMcKayAdamMcKayAdamMcKayAdamMcKayAdamMcKay',
@@ -227,7 +243,7 @@ describe('MovieController', () => {
 
     it('should return status 400 if data is missing genres when creating a new movie', async () => {
       const newMovie = {
-        title: 'The Big Short',
+        title: faker.company.name(),
         year: 2015,
         runtime: 130,
         director: 'Adam Mac',
