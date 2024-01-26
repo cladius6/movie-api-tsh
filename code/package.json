@@ -12,7 +12,7 @@
     "lint:js": "npm run lint:eslint src/",
     "lint:fix": "npm run lint:js -- --fix",
     "test": "jest",
-    "postinstall": "quicktype ../data/db.json -o src/types/dbTypes.ts --lang ts --just-types"
+    "dbtypes": "quicktype ../data/db.json -o src/types/dbTypes.ts --lang ts --just-types"
   },
   "keywords": [],
   "author": "",
