@@ -1,0 +1,19 @@
+FROM node:20-alpine as build
+
+WORKDIR /app
+
+# Copy db.json and package.json
+COPY data/db.json /app/data/db.json
+COPY code/package.json /app/code/package.json
+
+WORKDIR /app/code
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of your application code
+COPY code/ /app/code/
+
+EXPOSE 3000
+RUN npm run build
+CMD ["node", "build/app.js"]
