@@ -1,7 +1,6 @@
 import { z } from 'zod';
 
-const movieSchema = z.object({
-  id: z.number().positive(),
+export const createMovieSchema = z.object({
   genres: z.array(z.string()),
   title: z.string().max(255).min(1),
   year: z.number().positive(),
@@ -12,4 +11,6 @@ const movieSchema = z.object({
   posterUrl: z.string().url().optional(),
 });
 
-export const moviesSchema = z.array(movieSchema);
+export const createMovieRequestSchema = z.object({
+  body: createMovieSchema,
+});

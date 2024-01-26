@@ -1,6 +1,4 @@
 import { z } from 'zod';
-import { A, Test } from 'ts-toolbelt';
-import { Movie } from '@/types/dbTypes';
 
 export const movieSchema = z.object({
   id: z.number(),
@@ -13,8 +11,3 @@ export const movieSchema = z.object({
   plot: z.string(),
   posterUrl: z.string().url(),
 });
-
-export type TMovie = z.infer<typeof movieSchema>;
-
-type validation = A.Equals<TMovie, Movie>;
-Test.checks([Test.check<validation, 1, Test.Pass>()]);

@@ -1,6 +1,5 @@
 import config from '@/config';
-import { DBTypes } from '@/types/dbTypes';
-// import { readFileSync, writeFileSync } from 'fs';
+import { DBTypes } from '@/types/db-types';
 import { readFile, writeFile } from 'fs/promises';
 import { join } from 'path';
 import { Service } from 'typedi';

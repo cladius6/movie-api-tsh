@@ -1,8 +1,8 @@
 import { MovieRepository } from '@/repositories/movie.repository';
-import { TCreateMovie, TGetMovies } from '@/types/apiTypes';
+import { TCreateMovie, TGetMovies } from '@/types/api-types';
 import { Service, Inject } from 'typedi';
 import { MovieSelectorService } from './movie-selector.service';
-import { createMovieSchema } from '@/schemas/movies.schema';
+import { createMovieSchema } from '@/schemas/create-movie.schema';
 
 @Service()
 export class MovieService {

@@ -1,4 +1,4 @@
-import { HttpsError } from '@/errors/https.error';
+import { HttpsError } from '@/exceptions/https-error';
 import { ErrorStatusCode } from '@/types/errors';
 import type { Request } from 'express';
 import { AnyZodObject, ZodError, z } from 'zod';

@@ -3,7 +3,8 @@ import { Service, Inject } from 'typedi';
 import { NextFunction, Request, Response } from 'express';
 import { zodParse } from '@/parsers/zod.parser';
 import { StatusCodes } from 'http-status-codes';
-import { createMovieRequestSchema, getMoviesQueryParamsSchema } from '@/schemas/movies.schema';
+import { getMoviesQueryParamsSchema } from '@/schemas/get-movies.schema';
+import { createMovieRequestSchema } from '@/schemas/create-movie.schema';
 
 @Service()
 export class MovieController {

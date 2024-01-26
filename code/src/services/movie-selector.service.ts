@@ -1,5 +1,5 @@
-import { TMovie } from '@/models/movie.model';
-import { Movie } from '@/types/dbTypes';
+import { TMovie } from '@/types/api-types';
+import { Movie } from '@/types/db-types';
 import { Service } from 'typedi';
 
 @Service()

@@ -1,9 +1,10 @@
-import { HttpsError } from '@/errors/https.error';
+import { HttpsError } from '@/exceptions/https-error';
+import { logger } from '@/logger';
 import { ErrorStatusCode } from '@/types/errors';
 import { NextFunction, Request, Response } from 'express';
 
 export function errorHandler(err: HttpsError | Error, _req: Request, res: Response, _next: NextFunction) {
-  console.error(err);
+  logger.error(err);
 
   let statusCode: number;
 
