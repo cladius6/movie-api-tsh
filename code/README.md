@@ -22,20 +22,28 @@ Please ensure you have the following tools installed:
    cd movie-api-task
    ```
 
-3. Install dependencies:
+3. Add .env.development
+
+   ```bash
+   cp .env.example .env.development
+   ```
+
+   > Adjust it according to your preference.
+
+4. Install dependencies:
 
    ```bash
    cd code
    pnpm install
    ```
 
-4. Build app:
+5. Build app:
 
    ```bash
    pnpm run build
    ```
 
-5. Start app:
+6. Start app:
 
    ```bash
    pnpm run start
@@ -66,3 +74,9 @@ pnpm run dbtypes
 ```bash
 pnpm run test
 ```
+
+### Future ideas:
+
+- Add fully automated swagger integration
+- Adjust project for prodution and deploy it anywhere and test production version
+- Migrate from json database to any SQL database and integrate ORM
