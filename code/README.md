@@ -13,7 +13,7 @@ Please ensure you have the following tools installed:
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/your-username/your-repo-name.git
+   git clone https://github.com/cladius6/movie-api-tsh
    ```
 
 2. Navigate to the project directory:
