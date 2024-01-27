@@ -20,6 +20,7 @@ describe(MovieService.name, () => {
         return Promise.resolve({ id, ...movie });
       }),
       findByTitleYearAndActorsAndRuntime: jest.fn().mockResolvedValue(undefined),
+      getGenres: jest.fn().mockResolvedValue(dbData.genres),
     };
     movieSelectorService = new DbMovieSelectorService();
     movieService = new MovieService(mockMovieRepository as MovieRepository, movieSelectorService);

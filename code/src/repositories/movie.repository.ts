@@ -12,6 +12,12 @@ export class MovieRepository {
     return movies;
   }
 
+  async getGenres(): Promise<string[]> {
+    const dbData = await this.dbService.readDb();
+    const genres: string[] = dbData.genres;
+    return genres;
+  }
+
   async addMovie(movie: Omit<DbMovie, 'id'>): Promise<DbMovie> {
     const db = await this.dbService.readDb();
     const moviesDb = db.movies;

@@ -15,6 +15,75 @@ export class MovieService {
     @Inject(() => DbMovieSelectorService) private movieSelectorService: DbMovieSelectorService,
   ) {}
 
+  async getAllMovies(query: TGetMovies): Promise<ApiMovie[]> {
+    const movies: DbMovie[] = await this.movieRepository.getAllMovies();
+    const { duration, genres } = query;
+
+    if (duration && !genres) {
+      return [this.getApiRandomMovieByDuration(movies, duration)];
+    }
+
+    if (!duration && genres) {
+      return this.getApiMoviesWithGenres(movies, genres);
+    }
+
+    if (duration && genres) {
+      return this.getApiMoviesWithDurationAndGenres(movies, duration, genres);
+    }
+
+    return [this.getRandomApiMovie(movies)];
+  }
+
+  async createMovie(movieData: TCreateMovie) {
+    const movie = await createMovieSchema.parseAsync(movieData);
+    await this.validateMovieData(movie);
+    const newMovie = this.prepareDbMovie(movie);
+    const addedMovie = await this.movieRepository.addMovie(newMovie);
+    return new ApiMovie(addedMovie);
+  }
+
+  private async validateMovieData(movieData: TCreateMovie): Promise<void> {
+    const movie = await createMovieSchema.parseAsync(movieData);
+    await this.ensureValidGenres(movie.genres);
+    await this.ensureUniqueMovie(movie);
+  }
+
+  private async ensureValidGenres(genres: string[]): Promise<void> {
+    const invalidGenres = await this.validateGenres(genres);
+    if (invalidGenres.length > 0) {
+      throw new HttpsError(ErrorStatusCode.BAD_REQUEST, 'Invalid genres provided', { invalidGenres });
+    }
+  }
+
+  private async ensureUniqueMovie(movie: TCreateMovie): Promise<void> {
+    const existingMovie = await this.movieRepository.findByTitleYearAndActorsAndRuntime(
+      movie.title,
+      movie.year.toString(),
+      movie.actors || '',
+      movie.runtime.toString(),
+    );
+    if (existingMovie) {
+      throw new HttpsError(ErrorStatusCode.CONFLICT, 'Movie already exists!');
+    }
+  }
+
+  private prepareDbMovie(movie: TCreateMovie): Omit<DbMovie, 'id'> {
+    return {
+      ...movie,
+      year: movie.year.toString(),
+      runtime: movie.runtime.toString(),
+      actors: movie.actors || '',
+      plot: movie.plot || '',
+      posterUrl: movie.posterUrl || '',
+    };
+  }
+
+  private async validateGenres(genres: string[]): Promise<string[]> {
+    const validGenres = await this.movieRepository.getGenres();
+    const invalidGenres = genres.filter(genre => !validGenres.includes(genre));
+    return invalidGenres;
+  }
+
   private getApiRandomMovieByDuration(movies: DbMovie[], duration: number): ApiMovie {
     const moviesByDuration = this.movieSelectorService.getMoviesByDuration(movies, duration);
     if (moviesByDuration.length > 0) {
@@ -45,47 +114,5 @@ export class MovieService {
 
   private getRandomApiMovie(movies: DbMovie[]): ApiMovie {
     return new ApiMovie(this.movieSelectorService.getRandomMovie(movies));
-  }
-
-  async getAllMovies(query: TGetMovies): Promise<ApiMovie[]> {
-    const movies: DbMovie[] = await this.movieRepository.getAllMovies();
-    const { duration, genres } = query;
-
-    if (duration && !genres) {
-      return [this.getApiRandomMovieByDuration(movies, duration)];
-    }
-
-    if (!duration && genres) {
-      return this.getApiMoviesWithGenres(movies, genres);
-    }
-
-    if (duration && genres) {
-      return this.getApiMoviesWithDurationAndGenres(movies, duration, genres);
-    }
-
-    return [this.getRandomApiMovie(movies)];
-  }
-
-  async createMovie(movieData: TCreateMovie) {
-    const movie = await createMovieSchema.parseAsync(movieData);
-    const existingMovie = await this.movieRepository.findByTitleYearAndActorsAndRuntime(
-      movieData.title,
-      movieData.year.toString(),
-      movieData.actors || '',
-      movieData.runtime.toString(),
-    );
-    if (existingMovie !== undefined) {
-      throw new HttpsError(ErrorStatusCode.CONFLICT, 'Movie already exists!');
-    }
-    const newMovie = {
-      ...movie,
-      year: movie.year.toString(),
-      runtime: movie.runtime.toString(),
-      actors: movie.actors || '',
-      plot: movie.plot || '',
-      posterUrl: movie.posterUrl || '',
-    };
-    const addedMovie = await this.movieRepository.addMovie(newMovie);
-    return new ApiMovie(addedMovie);
   }
 }
