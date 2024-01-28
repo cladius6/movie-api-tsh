@@ -3,6 +3,7 @@ import { logger } from '@/logger';
 import { ErrorStatusCode } from '@/types/errors';
 import { NextFunction, Request, Response } from 'express';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function errorHandler(err: HttpsError | Error, _req: Request, res: Response, _next: NextFunction) {
   if (process.env.NODE_ENV !== 'test') {
     logger.error(err);

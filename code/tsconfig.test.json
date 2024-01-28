@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "outDir": "./build/tests",
+    "types": ["jest"],
+    "esModuleInterop": true
+  },
+  "include": [
+    "./src/**/*.ts",
+    "**/*.test.ts",
+    "__tests__",
+  ],
+  "exclude": [
+    "node_modules",
+    "build"
+  ]
+}

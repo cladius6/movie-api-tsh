@@ -1,3 +1,11 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+require('tsconfig-paths').register({
+  baseUrl: './build',
+  paths: {
+    '@/*': ['./*'],
+  },
+});
+
 import app from './app';
 import config from '@/config';
 

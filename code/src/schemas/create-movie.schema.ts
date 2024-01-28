@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const createMovieSchema = z.object({
-  genres: z.array(z.string()),
+  genres: z.array(z.string().min(1)).nonempty(),
   title: z.string().max(255).min(1),
   year: z.number().positive(),
   runtime: z.number().positive(),

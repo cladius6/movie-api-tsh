@@ -21,8 +21,7 @@ export class MovieRepository {
   async addMovie(movie: Omit<DbMovie, 'id'>): Promise<DbMovie> {
     const db = await this.dbService.readDb();
     const moviesDb = db.movies;
-    const lastMovieId = moviesDb[moviesDb.length - 1].id;
-    const id = lastMovieId + 1;
+    const id = moviesDb.length + 1;
     const newMovie = {
       id,
       ...movie,
